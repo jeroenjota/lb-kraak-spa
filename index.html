@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="main.css"" />
+    <title>Laurierboom Kraaktoernooi</title>
+  </head>
+  <body>
+    <div id="app" class="container mx-auto py-6">
+      <div class="content">
+        <img alt="logo" src="lb_logo2.gif" />
+        <h1 class="title">Kraaktoernooi</h1>
+        <h2 class="subtitle">Altijd gezellig</h2>
+      </div>
+      <initialize-toernooi></initialize-toernooi>
+    </div>
+
+    <script type="text/x-template" id="initialize-toernooi">
+        <div class="main">
+        <nav class="nav" id="nav">
+          <li class="links">
+            Spelers:
+            <input
+              class="number-input"
+              type="number"
+              v-model="spelersaantal"
+              min="1"
+              max="32"
+            />
+          </li>
+          <li class="links">Teams:  <span class="big-number"> {{ teamaantal }}</span></li>
+          <li class="links">Tafels: <span class="big-number"> {{ tafelaantal }}</span></li>
+          <li class="links">
+            Rondes:
+            <input
+             class="number-input"
+             type="number"
+             v-model.number="rondeaantal"
+             min="1"
+             max="8"
+
+             />
+          </li>
+        </nav>
+        <div class="text-center">
+          <h2>Spelers</h2>
+          <p v-for="item in teamaantal" :key="item">
+           <!-- <label >Team {{item }}:  <input class="spelerinput" type="text"> / <input class="spelerinput" type="text"></label> -->
+            <label >Team {{item }}:
+              <select class="speler-input">
+                <option> - </option>
+                <option v-for="naam in namenlijst">{{naam}}</option>
+              </select> /
+              <select class="spelerinput">
+                <option> - </option>
+                <option v-for="naam in namen">{{naam}}</option>
+              </select>
+            </label>
+          </p>
+        </div>
+        <div class="text-center">
+          <table class="speler-input">
+            <tr>
+              <td>Team</td>
+              <td v-for="ronde in rondeaantal" :key="ronde">Ronde {{ronde}}</td>
+            </tr>
+            <tr v-for="item in teamaantal">
+              <td class="speler-input">speler1/speler2</td>
+              <td v-for="ronde in rondeaantal"><input
+                class="number-input"
+                type="number"
+                min="1"
+                max="32"
+              />
+            </td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+    </script>
+
+    <!-- <script type="module">
+      import namen from "./data/namen.json";
+      export default {
+        data() {
+          return namen;
+        }
+      };
+    </script> -->
+
+    <script src="https://unpkg.com/vue"></script>
+    <script src="app.js"></script>
+  </body>
+  <style scoped>
+    main {
+      font-family: "Times New Roman", Times, serif;
+      background-color: rgb(149, 175, 185);
+    }
+    .number-input {
+      text-align: center;
+      width: 50px;
+      background-color: white;
+      border: 1px solid;
+    }
+
+    .speler-input {
+      display: inline-block;
+      background-color: white;
+      border: 1px solid;
+    }
+
+    .big-number {
+      text-align: center;
+      display: inline-block;
+      width: 50px;
+      background-color: white;
+      border: 1px solid;
+    }
+    h1 {
+      color: dark-green;
+      font-size: 48pt;
+      text-align: center;
+    }
+
+    #nav {
+      display: flex;
+      justify-content: center;
+      padding: 0, 10px;
+    }
+    #nav a {
+      font-weight: bold;
+      color: #2c3e50;
+      padding: 0 10px;
+    }
+
+    #nav a.myLinkedClass {
+      color: #a142b9;
+    }
+    .nav-links {
+      display: flex;
+    }
+    .links {
+      padding-right: 20px;
+      list-style: none;
+      font-size: 2em;
+    }
+
+    .links:hover {
+      /* text-decoration: underline; */
+    }
+
+    .logo {
+      font-size: 20px;
+      color: purple;
+      font-weight: bold;
+    }
+  </style>
+</html>
