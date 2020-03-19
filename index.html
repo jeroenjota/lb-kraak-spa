@@ -94,8 +94,7 @@
               <td class="text-center">{{ tafel}}</td>
 
               <td v-for="ronde in rondeaantal" class="text-center">
-               {{pairings[(tafel-1)+(ronde-1) + (tafel-1)*(rondeaantal-1)].teamA}} - 
-               {{pairings[(tafel-1)+(ronde-1) + (tafel-1)*(rondeaantal-1)].teamB}} 
+               {{pairings[ronde-1][tafel-1][0]}} - {{pairings[ronde-1][tafel-1][1]}}
               </td>
 
             </tr>

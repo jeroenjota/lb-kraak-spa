@@ -43,6 +43,7 @@ let InitializeToernooiComponent = {
       teams: [],
       pairings: [],
       teller: 0,
+      ps:[]
 
     };
   },
@@ -63,6 +64,22 @@ let InitializeToernooiComponent = {
   },
   methods: {
     createpairings(){
+      this.pairings=[]
+      var teams = []
+      for(var k=1; k<=this.teamaantal; k++){
+        teams.push(k)
+      }
+      for (var j = 0 ; j<this.teamaantal-1 ; j++){
+        this.pairings[j] = []
+        for (var i= 0; i<this.teamaantal/2; i++){
+          this.pairings[j].push([teams[i], teams[this.teamaantal-1-i]])
+        }
+        teams.splice(1,0,teams.pop())
+      }
+
+    }
+    ,
+    oldpairings(){
       if (this.rondeaantal>this.teamaantal-1){
         this.rondeaantal=this.teamaantal-1
       }
@@ -118,6 +135,7 @@ let InitializeToernooiComponent = {
         }
         this.teams[i].nummer = i+1
       }
+      this.teller = this.teams.length
     },
   }
 }
