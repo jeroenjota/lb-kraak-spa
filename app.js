@@ -64,6 +64,9 @@ let InitializeToernooiComponent = {
   },
   methods: {
     createpairings(){
+      if (this.rondeaantal>this.teamaantal-1){
+        this.rondeaantal=this.teamaantal-1
+      }
       this.pairings=[]
       var teams = []
       for(var k=1; k<=this.teamaantal; k++){
@@ -80,9 +83,6 @@ let InitializeToernooiComponent = {
     }
     ,
     oldpairings(){
-      if (this.rondeaantal>this.teamaantal-1){
-        this.rondeaantal=this.teamaantal-1
-      }
       this.pairings = []
       var counter = 0
       var tafel = 0
@@ -112,14 +112,19 @@ let InitializeToernooiComponent = {
       }
     },
     teamAdd(left){
+
       if(left){
+        if(this.speler1){
         this.teams.push({
           nummer: this.teams.length+1,
           speler1: this.speler1,
           })
+        }
       } else {
-        this.teams[this.teams.length-1].speler2=this.speler2
-        this.teller = this.teams.length
+        if(this.speler2){
+          this.teams[this.teams.length-1].speler2=this.speler2
+          this.teller = this.teams.length
+        }
       }
       this.createpairings()
     },
