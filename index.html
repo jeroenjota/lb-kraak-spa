@@ -16,8 +16,11 @@
       <initialize-toernooi></initialize-toernooi>
     </div>
 
-    <script type="text/x-template" id="initialize-toernooi">
-        <div class="main">
+    <script type="text/x-template" id="initialize-toernooi"},
+
+>
+
+      <div class="main">
         <nav class="nav" id="nav">
           <li class="links">
             Spelers:
@@ -27,7 +30,8 @@
               v-model="spelersaantal"
               min="1"
               max="32"
-            />
+              @click="createpairings()"
+              />
           </li>
           <li class="links">Teams:  <span class="big-number"> {{ teamaantal }}</span></li>
           <li class="links">Tafels: <span class="big-number"> {{ tafelaantal }}</span></li>
@@ -38,30 +42,31 @@
              type="number"
              v-model.number="rondeaantal"
              min="1"
-             max="8"
-
+             max="12"
+             @click="createpairings()"
              />
           </li>
         </nav>
-        <div class="text-center">
+        <div v-if="teller<teamaantal" class="text-center">
           <h2>Spelers</h2>
           <label >Team {{ teams.length+1 }}:
-            <select class="speler-input" v-model="speler1">
-              <option> - </option>
+            <select class="speler-input" v-model="speler1" @click="teamAdd(true); selectNaam(speler1)" >
+              <!-- <option> - </option> -->
               <option v-for="naam in namenlijst">{{naam}}</option>
             </select> /
-            <select class="speler-input" v-model="speler2" @click="teamAdd(); selectNaam(speler1); selectNaam(speler2)">
-              <option> - </option>
+            <select class="speler-input" v-model="speler2" @click="teamAdd(false); selectNaam(speler2)">
+              <!-- <option> - </option> -->
               <option v-for="naam in namen">{{naam}}</option>
             </select>
           </label>
         </div>
-        <div id="main-input">
+        <div class="main-input">
           <table id="scoretabel">
             <tr>
               <th colspan="2">Team</th>
               <th v-for="ronde in rondeaantal" :key="ronde">Ronde {{ronde}}</th>
               <th>Totaal</th>
+              <th></th>
             </tr>
             <tr v-for="team in teams">
               <td>{{team.nummer}}</td>
@@ -72,13 +77,34 @@
                 min="1"
                 max="32"
               />
-              <td class="speler-input">-</td>
-            </td>
+              <td class="speler-input text-center" >0</td>
+              <td>
+                <button class="btn-cancel" @click="teamRemove(team)">X</button>
+              </td>
             </tr>
           </table>
         </div>
+        <div class="main-input">
+          <table id="schematabel"  v-if="pairings.length">
+            <tr>
+              <th class="text-center">Tafel</th>
+              <th v-for="ronde in rondeaantal">Ronde {{ronde}}</th>
+            </tr>
+            <tr v-for="tafel in tafelaantal">
+              <td class="text-center">{{ tafel}}</td>
 
+              <td v-for="ronde in rondeaantal" class="text-center">
+               {{pairings[(tafel-1)+(ronde-1) + (tafel-1)*(rondeaantal-1)].teamA}} - 
+               {{pairings[(tafel-1)+(ronde-1) + (tafel-1)*(rondeaantal-1)].teamB}} 
+              </td>
+
+            </tr>
+          </table>
+          
+        </div>
+  
       </div>
+
     </script>
 
     <!-- <script type="module">
@@ -105,13 +131,13 @@
       background-color: white;
       border: 1px solid;
     }
-    #main-input {
-      position: absolute;
+    .main-input {
+      position: relative;
       padding: 10px;
       margin: 10px auto;
       right: 0;
       left: 0;
-      width: 70%;
+      width: 100%;
       display: inline-block;
       /* background-color: white; */
       border: 1px solid;
@@ -121,6 +147,17 @@
       position: relative;
       margin: auto;
       background-color: white;
+      border: 1px solid;
+    }
+
+    #schematabel{
+      position: relative;
+      margin: auto;
+      border: 1px solid;
+    }
+
+    #schematabel th, td {
+      border-collapse:collapse ;
       border: 1px solid;
     }
 

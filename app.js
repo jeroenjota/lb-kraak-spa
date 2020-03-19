@@ -38,11 +38,12 @@ let InitializeToernooiComponent = {
         "TheoW",
         "Pieter"
       ],
-      namenSelected: [],
       speler1: "",
       speler2: '',
-      teams: [
-      ]
+      teams: [],
+      pairings: [],
+      teller: 0,
+
     };
   },
   computed: {
@@ -61,8 +62,31 @@ let InitializeToernooiComponent = {
     }
   },
   methods: {
+    createpairings(){
+      if (this.rondeaantal>this.teamaantal-1){
+        this.rondeaantal=this.teamaantal-1
+      }
+      this.pairings = []
+      var counter = 0
+      var tafel = 0
+      var mod = 0
+      for(var i=1; i<this.teamaantal; i++){
+        for(var j=i+1; j<=this.teamaantal; j++){
+          mod = counter%this.rondeaantal
+          if( mod === 0){
+            tafel++
+          }
+          this.pairings.push({teamA: i, teamB: j})
+          counter++
+          // console.log(this.rondeaantal, "tafel:" + tafel, "counter: " + counter, mod)
+        }
+      }
+    },
+    beforeMount(){
+      this.createpairings()
+    },
+
     selectNaam(naam){
-      this.namenSelected.push(naam)
       // remove naam from array
       for( var i = 0; i< this.namen.length; i++){
         if(this.namen[i] === naam ){
@@ -70,17 +94,33 @@ let InitializeToernooiComponent = {
         }
       }
     },
-    teamAdd(){
-      this.teams.push(
-        {
-        nummer: this.teams.length+1,
-        speler1: this.speler1,
-        speler2: this.speler2
-      })
-
-    }
+    teamAdd(left){
+      if(left){
+        this.teams.push({
+          nummer: this.teams.length+1,
+          speler1: this.speler1,
+          })
+      } else {
+        this.teams[this.teams.length-1].speler2=this.speler2
+        this.teller = this.teams.length
+      }
+      this.createpairings()
+    },
+    teamRemove(team){
+      this.namen.push(team.speler1)
+      this.namen.push(team.speler2)
+      this.speler1=null
+      this.speler2=null
+      for( var i = 0; i< this.teams.length; i++){
+        console.log(this.teams[i].nummer)
+        if(this.teams[i].nummer === team.nummer ){
+          this.teams.splice(i,1)
+        }
+        this.teams[i].nummer = i+1
+      }
+    },
   }
-};
+}
 
 new Vue({
   el: "#app",
@@ -88,19 +128,5 @@ new Vue({
     "initialize-toernooi": InitializeToernooiComponent
   },
   data: {
-    namen: [
-      "Jeroen",
-      "Jan",
-      "Ramon",
-      "Gerard",
-      "Willem",
-      "Joost",
-      "Wim",
-      "Peter",
-      "Carla",
-      "Rob",
-      "TheoW",
-      "Pieter"
-    ]
-  }
-});
+  }, 
+})
