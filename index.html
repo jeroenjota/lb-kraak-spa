@@ -45,34 +45,34 @@
         </nav>
         <div class="text-center">
           <h2>Spelers</h2>
-          <p v-for="item in teamaantal" :key="item">
-           <!-- <label >Team {{item }}:  <input class="spelerinput" type="text"> / <input class="spelerinput" type="text"></label> -->
-            <label >Team {{item }}:
-              <select class="speler-input">
-                <option> - </option>
-                <option v-for="naam in namenlijst">{{naam}}</option>
-              </select> /
-              <select class="spelerinput">
-                <option> - </option>
-                <option v-for="naam in namen">{{naam}}</option>
-              </select>
-            </label>
-          </p>
+          <label >Team {{ teams.length+1 }}:
+            <select class="speler-input" v-model="speler1">
+              <option> - </option>
+              <option v-for="naam in namenlijst">{{naam}}</option>
+            </select> /
+            <select class="speler-input" v-model="speler2" @click="teamAdd(); selectNaam(speler1); selectNaam(speler2)">
+              <option> - </option>
+              <option v-for="naam in namen">{{naam}}</option>
+            </select>
+          </label>
         </div>
-        <div class="text-center">
-          <table class="speler-input">
+        <div id="main-input">
+          <table id="scoretabel">
             <tr>
-              <td>Team</td>
-              <td v-for="ronde in rondeaantal" :key="ronde">Ronde {{ronde}}</td>
+              <th colspan="2">Team</th>
+              <th v-for="ronde in rondeaantal" :key="ronde">Ronde {{ronde}}</th>
+              <th>Totaal</th>
             </tr>
-            <tr v-for="item in teamaantal">
-              <td class="speler-input">speler1/speler2</td>
+            <tr v-for="team in teams">
+              <td>{{team.nummer}}</td>
+              <td class="speler-input">{{team.speler1}}/{{team.speler2}}</td>
               <td v-for="ronde in rondeaantal"><input
                 class="number-input"
                 type="number"
                 min="1"
                 max="32"
               />
+              <td class="speler-input">-</td>
             </td>
             </tr>
           </table>
@@ -93,6 +93,7 @@
     <script src="https://unpkg.com/vue"></script>
     <script src="app.js"></script>
   </body>
+
   <style scoped>
     main {
       font-family: "Times New Roman", Times, serif;
@@ -104,11 +105,30 @@
       background-color: white;
       border: 1px solid;
     }
+    #main-input {
+      position: absolute;
+      padding: 10px;
+      margin: 10px auto;
+      right: 0;
+      left: 0;
+      width: 70%;
+      display: inline-block;
+      /* background-color: white; */
+      border: 1px solid;
+    }
+
+    #scoretabel{
+      position: relative;
+      margin: auto;
+      background-color: white;
+      border: 1px solid;
+    }
 
     .speler-input {
       display: inline-block;
       background-color: white;
       border: 1px solid;
+      width: 100px;
     }
 
     .big-number {

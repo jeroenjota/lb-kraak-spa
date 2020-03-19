@@ -1,22 +1,14 @@
-let PlanPickerItemComponent = {
-  template: "#plan-picker-item-template",
-  props: {
-    name: {
-      type: String,
-      required: true
-    },
-    selectedPlan: {
-      type: String
-    }
-  },
-  computed: {
-    isSelected() {
-      return this.name === this.selectedPlan;
-    }
-  },
+let ToernooiSchemaComponent = {
+  template: "#toernooischema-template",
   data() {
     return {
-      selected: false
+      ronde: [
+        {
+          rondenummer: Number,
+          teamA: Number,
+          teamB: Number,
+        }
+    ]
     };
   },
   methods: {
@@ -25,6 +17,7 @@ let PlanPickerItemComponent = {
     }
   }
 };
+
 let InitializeToernooiComponent = {
   template: "#initialize-toernooi",
   data() {
@@ -45,12 +38,10 @@ let InitializeToernooiComponent = {
         "TheoW",
         "Pieter"
       ],
+      namenSelected: [],
+      speler1: "",
+      speler2: '',
       teams: [
-        {
-          nummer: Number,
-          speler1: String,
-          speler2: String
-        }
       ]
     };
   },
@@ -67,6 +58,26 @@ let InitializeToernooiComponent = {
     },
     namenlijst() {
       return this.namen.sort();
+    }
+  },
+  methods: {
+    selectNaam(naam){
+      this.namenSelected.push(naam)
+      // remove naam from array
+      for( var i = 0; i< this.namen.length; i++){
+        if(this.namen[i] === naam ){
+          this.namen.splice(i,1)
+        }
+      }
+    },
+    teamAdd(){
+      this.teams.push(
+        {
+        nummer: this.teams.length+1,
+        speler1: this.speler1,
+        speler2: this.speler2
+      })
+
     }
   }
 };
