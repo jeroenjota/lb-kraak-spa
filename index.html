@@ -12,14 +12,13 @@
         <h1 class="title">Kraaktoernooi</h1>
         <h2 class="subtitle">Altijd gezellig</h2>
       </div>
-      <initialize-toernooi></initialize-toernooi>
+      <output id="list"></output>
+      
+        <initialize-toernooi></initialize-toernooi>
     </div>
 
-    <script type="text/x-template" id="initialize-toernooi"},
-
->
-
-      <div class="main">
+    <script type="text/x-template" id="initialize-toernooi"}>
+     <div class="main">
         <nav class="nav" id="nav">
           <li class="links">
             Spelers:
@@ -47,7 +46,12 @@
           </li>
         </nav>
         <div v-if="teller<teamaantal" class="text-center">
-          <h2>Spelers</h2>
+          <h2>Krakers</h2>
+          <p>
+            <label class="naam" for="newName">Kraker toevoegen:
+              <input type="text" v-model="newPlayer" name="newName" id="" @keyup.enter="addSpeler()">
+            </label>
+          </p>
           <label class="naam">Team {{ teams.length+1 }}:
             <select class="speler-input" v-model="speler1" @click="teamAdd(true); selectNaam(speler1)" >
               <!-- <option> - </option> -->
@@ -55,10 +59,10 @@
             </select> /
             <select class="speler-input" v-model="speler2" @click="teamAdd(false); selectNaam(speler2)">
               <!-- <option> - </option> -->
-              <option v-for="naam in namen">{{naam}}</option>
+              <option v-for="naam in namenlijst">{{naam}}</option>
             </select>
           </label>
-        </div>
+      </div>
         <div class="main-input">
           <table id="scoretabel">
             <tr>
@@ -67,16 +71,18 @@
               <th>Totaal</th>
               <th></th>
             </tr>
-            <tr v-for="team in teams">
+            <tr v-for="(team, index) in teams">
               <td>{{team.nummer}}</td>
               <td class="speler-input text-center">{{team.speler1}}/{{team.speler2}}</td>
               <td v-for="ronde in rondeaantal"><input
+                :id="'punten[' + (index+1) + ',' + ronde + ']'"
                 class="number-input"
                 type="number"
                 min="1"
                 max="32"
+                @click="calcTotal()"
               />
-              <td class="speler-input text-center" >0</td>
+              <td class="speler-input text-center" :value="calcTotal(team.nummer)"></td>
               <td>
                 <button class="btn-cancel" @click="teamRemove(team)">X</button>
               </td>
@@ -113,9 +119,190 @@
         }
       };
     </script> -->
+    <script>
+
+    </script>
 
     <script src="https://unpkg.com/vue"></script>
-    <script src="app.js"></script>
+    <!-- <script src="app.js"></script> -->
+    <script>
+        let ToernooiSchemaComponent = {
+          template: "#toernooischema-template",
+          data() {
+            return {
+              ronde: [
+                {
+                  rondenummer: Number,
+                  teamA: Number,
+                  teamB: Number,
+                }
+            ]
+            };
+          },
+          methods: {
+            select() {
+              this.$emit("select", this.name);
+            }
+          }
+        };
+
+        let InitializeToernooiComponent = {
+
+          template: "#initialize-toernooi",
+          data() {
+            return {
+              spelersaantal: 12,
+              rondeaantal: 5,
+              namen: [
+                "Jeroen",
+                "Jan",
+                "Ramon",
+                "Gerard",
+                "Willem",
+                "Joost",
+                "Wim",
+                "Peter",
+                "Carla",
+                "Rob",
+                "TheoW",
+                "Pieter",
+                "zzz",
+                "zzz"
+              ],
+              newPlayer: "",
+              speler1: "",
+              speler2: '',
+              teams: [],
+              pairings: [],
+              teller: 0,
+              ps:[],
+              rondepunten:[],
+              totalpoints: [],
+            };
+          },
+          computed: {
+            tafelaantal() {
+              let spelers = this.spelersaantal;
+              while (!Number.isInteger(spelers / 4)) {
+                spelers++;
+              }
+              return spelers / 4;
+            },
+            teamaantal() {
+              let spelers = this.spelersaantal;
+              while (!Number.isInteger(spelers / 4)) {
+                spelers++;
+              }
+              return Math.ceil(spelers / 2);
+              
+            },
+            namenlijst() {
+              return this.namen.sort()
+             }
+          },
+          methods: {
+            addSpeler(){
+              var naamteller = 0
+              if(this.newPlayer){
+                for(i=0;i<this.namen.length;i++){
+                  if(this.namen[i] === this.newPlayer){
+                    naamteller++
+                  }
+                }
+                if (naamteller > 0 ) {
+                  this.newPlayer += "(" + (naamteller+1) + ")"
+                }
+
+                this.namen.push(this.newPlayer)
+                this.newPlayer=""
+              }
+            },
+            createpairings(){
+              if (this.rondeaantal>this.teamaantal-1){
+                this.rondeaantal=this.teamaantal-1
+              }
+              this.rondepunten=[]
+              this.pairings=[]
+              var teams = []
+              for(var k=1; k<=this.teamaantal; k++){
+                teams.push(k)
+              }
+              for (var j = 0 ; j<this.teamaantal-1 ; j++){
+                this.pairings[j] = []
+                for (var i= 0; i<this.teamaantal/2; i++){
+                  this.pairings[j].push([teams[i], teams[this.teamaantal-1-i]])
+                }
+                teams.splice(1,0,teams.pop())
+              }
+
+
+
+            },
+            beforeMount(){
+              this.createpairings()
+            },
+
+            selectNaam(naam){
+              // remove naam from array
+              for( var i = 0; i< this.namen.length; i++){
+                if(this.namen[i] === naam ){
+                  this.namen.splice(i,1)
+                }
+              }
+            },
+            teamAdd(left){
+
+              if(left){
+                if(this.speler1){
+                this.teams.push({
+                  nummer: this.teams.length+1,
+                  speler1: this.speler1,
+                  })
+                }
+              } else {
+                if(this.speler2){
+                  this.teams[this.teams.length-1].speler2=this.speler2
+                  this.teller = this.teams.length
+                }
+              }
+              this.createpairings()
+            },
+            teamRemove(team){
+              this.namen.push(team.speler1)
+              this.namen.push(team.speler2)
+              this.speler1=null
+              this.speler2=null
+              for( var i = 0; i< this.teams.length; i++){
+                console.log(this.teams[i].nummer)
+                if(this.teams[i].nummer === team.nummer ){
+                  this.teams.splice(i,1)
+                }
+                this.teams[i].nummer = i+1
+              }
+              this.teller = this.teams.length
+            },
+            calcTotal(t){
+              var total = 0
+              console.log( "ik ben er! op rij" + t)
+              for(r=1; r<=this.ondeaantal;r++){
+                total += document.getElementById('punten(' + (t) + ',' + (r) + ')')
+              }
+              return total
+              }
+            }
+          }
+
+        new Vue({
+          el: "#app",
+          components: {
+            "initialize-toernooi": InitializeToernooiComponent
+          },
+
+          data: {
+            namen:[]
+          },
+        })
+    </script>
   </body>
 
   <style scoped>
